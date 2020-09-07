@@ -7,6 +7,9 @@ const Error = () => {
       <div>
         <h1>404</h1>
         <h3>sorry, the page you try can not be found</h3>
+        <Link to="/" className="btn">
+          back Home
+        </Link>
       </div>
     </Wrapper>
   );
