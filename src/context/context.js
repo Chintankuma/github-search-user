@@ -16,7 +16,7 @@ const GithubProvider = ({ children }) => {
   const [followers, setFollowers] = useState(mockFollowers);
   //request loading
   const [request, setRequests] = useState(0);
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   //error
   const [error, setError] = useState({ show: false, msg: "" });
   //check request
@@ -40,6 +40,7 @@ const GithubProvider = ({ children }) => {
   //search user
   const searchGithubUsers = async (user) => {
     toggleError();
+    setIsLoading(true);
     //loading
     // console.log(user);
     const response = await axios(`${rootUrl}/users/${user}`).catch((err) =>
@@ -47,10 +48,24 @@ const GithubProvider = ({ children }) => {
     );
     console.log(response);
     if (response) {
+      // https://api.github.com/users/wesbos
+
+      const { login, followers_url } = response.data;
+      //repos
+      // https://api.github.com/users/john-smilga/repos?per_page=100
+      axios(`${rootUrl}/users/${login}/repos?per_page=100`).then((response) => {
+        setRepos(response.data);
+      });
+      // https://api.github.com/users/john-smilga/followers
+      axios(`${followers_url}?per_page=100`).then((response) => {
+        setFollowers(response.data);
+      });
       setGithubUser(response.data);
     } else {
       toggleError(true, "there is no user with that name");
     }
+    setIsLoading(false);
+    checkRequest();
   };
   return (
     <GithubContext.Provider
@@ -61,6 +76,7 @@ const GithubProvider = ({ children }) => {
         request,
         error,
         searchGithubUsers,
+        isLoading,
       }}
     >
       {children}
