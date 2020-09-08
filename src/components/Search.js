@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { MdSearch } from "react-icons/md";
 import { GithubContext } from "../context/context";
 const Search = () => {
+  const { request, error } = React.useContext(GithubContext);
   const [user, setUser] = React.useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,6 +14,11 @@ const Search = () => {
   return (
     <section className="section">
       <Wrapper className="section-center">
+        {error.show && (
+          <ErrorWrapper>
+            <p>{error.msg}</p>
+          </ErrorWrapper>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="form-control">
             <MdSearch> </MdSearch>
@@ -22,10 +28,10 @@ const Search = () => {
               value={user}
               onChange={(e) => setUser(e.target.value)}
             />
-            <button type="submit">search</button>
+            {request > 0 && <button type="submit">search</button>}
           </div>
         </form>
-        <h3>Request: 60 / 60</h3>
+        <h3>Request: {request} / 60</h3>
       </Wrapper>
     </section>
   );
