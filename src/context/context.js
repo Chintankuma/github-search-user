@@ -32,14 +32,36 @@ const GithubProvider = ({ children }) => {
     });
   };
 
-  function toggleError(show, msg) {
+  function toggleError(show = false, msg = "") {
     setError({ show, msg });
   }
 
   useEffect(checkRequest, []);
+  //search user
+  const searchGithubUsers = async (user) => {
+    toggleError();
+    //loading
+    // console.log(user);
+    const response = await axios(`${rootUrl}/users/${user}`).catch((err) =>
+      console.log(err)
+    );
+    console.log(response);
+    if (response) {
+      setGithubUser(response.data);
+    } else {
+      toggleError(true, "there is no user with that name");
+    }
+  };
   return (
     <GithubContext.Provider
-      value={{ githubUser, repos, followers, request, error }}
+      value={{
+        githubUser,
+        repos,
+        followers,
+        request,
+        error,
+        searchGithubUsers,
+      }}
     >
       {children}
     </GithubContext.Provider>
